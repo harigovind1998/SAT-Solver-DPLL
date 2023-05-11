@@ -242,10 +242,10 @@ int SATSolverDPLL::apply_transform(Formula &f, int literal_to_apply) {
  */
 int SATSolverDPLL::DPLL(Formula f) {
   
-  steady_clock::time_point begin = steady_clock::now();
+  // steady_clock::time_point begin = steady_clock::now();
   int result = unit_propagate(f); // perform unit propagation on the formula
-  steady_clock::time_point end = steady_clock::now();
-  cout << "Time difference = " << duration_cast<nanoseconds>(end - begin).count() << "[ns]" << endl;
+  // steady_clock::time_point end = steady_clock::now();
+  // cout << "Time difference = " << duration_cast<nanoseconds>(end - begin).count() << "[ns]" << endl;
 
   if (result == Cat::satisfied) // if formula satisfied, show result and return
   {

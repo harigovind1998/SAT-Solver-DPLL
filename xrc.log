@@ -1,0 +1,17 @@
+Tue Apr 11 12:47:04 2023: Server was asked to start on port: '40927'
+Tue Apr 11 12:47:04 2023: Server is using token UUID: '7a6ea892-8c51-4003-a492-382878f10163'
+Tue Apr 11 12:47:04 2023: Attempting to start server on port '40927'
+Tue Apr 11 12:47:04 2023: XRC main fifo: created main fifo '/tmp/xrcmain7a6ea892-8c51-4003-a492-382878f10163', fd read = 11
+Tue Apr 11 12:47:04 2023: Running Rule Check Server
+Tue Apr 11 12:47:04 2023: Version 1.6.1
+Tue Apr 11 12:47:04 2023: Rule Check Server: Accepted socket connection from client
+Tue Apr 11 12:47:04 2023: EXCHANGE_TOKEN received, server token: 7a6ea892-8c51-4003-a492-382878f10163, passed token: 7a6ea892-8c51-4003-a492-382878f10163
+Tue Apr 11 13:26:37 2023: Rule Check Server: do_await_stop
+Tue Apr 11 13:26:37 2023: Rule Check Server: stopping mainFifo_
+Tue Apr 11 13:26:37 2023: On server, in MainFifo::stop() 
+Tue Apr 11 13:26:37 2023: XRC main fifo: do_read error code: Operation canceled
+XRC main fifo: bytes_transferred: 0
+Tue Apr 11 13:26:37 2023: SERVER: destructor for server bound to port 40927
+Tue Apr 11 13:26:37 2023: XRC main fifo: Good unlink of /tmp/xrcmain7a6ea892-8c51-4003-a492-382878f10163
+Tue Apr 11 13:26:37 2023: Server exiting with status 0.
+Tue Apr 11 13:26:37 2023: Closing log file.
