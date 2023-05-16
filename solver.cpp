@@ -17,19 +17,21 @@ using namespace std::chrono;
 /*
  * enum for different types of return flags defined
  */
-enum Cat {
+enum Cat
+{
   satisfied,   // when a satisfying assignment has been found
   unsatisfied, // when no satisfying assignment has been found after
                // exhaustively searching
-  normal,   // when no satisfying assignment has been found till now, and DPLL()
-            // has exited normally
-  completed // when the DPLL algorithm has completed execution
+  normal,      // when no satisfying assignment has been found till now, and DPLL()
+               // has exited normally
+  completed    // when the DPLL algorithm has completed execution
 };
 
 /*
  * class to represent a boolean formula
  */
-class Formula {
+class Formula
+{
 public:
   // a vector that stores the value assigned to each variable, where
   // -1 - unassigned
@@ -51,7 +53,8 @@ public:
   Formula() {}
 
   // copy constructor for copying a formula - each member is copied over
-  Formula(const Formula &f) {
+  Formula(const Formula &f)
+  {
     literals = f.literals;
     clauses = f.clauses;
     literal_frequency = f.literal_frequency;
@@ -62,7 +65,8 @@ public:
 /*
  * class to represent the structure and functions of the SAT Solver
  */
-class SATSolverDPLL {
+class SATSolverDPLL
+{
 private:
   Formula formula;               // the initial formula given as input
   int literal_count;             // the number of variables in the formula
@@ -70,7 +74,7 @@ private:
   int unit_propagate(Formula &); // performs unit propagation
   int DPLL(Formula);             // performs DPLL recursively
   int apply_transform(Formula &,
-                      int); // applies the value of the literal in every clause
+                      int);         // applies the value of the literal in every clause
   void show_result(Formula &, int); // displays the result
 public:
   SATSolverDPLL() {}
@@ -82,16 +86,19 @@ public:
  * function that accepts the inputs from the user and initializes the attributes
  * in the solver
  */
-void SATSolverDPLL::initialize() {
+void SATSolverDPLL::initialize()
+{
   char c;   // store first character
   string s; // dummy string
 
-  while (true) {
+  while (true)
+  {
     cin >> c;
     if (c == 'c') // if comment
     {
       getline(cin, s); // ignore
-    } else             // else, if would be a p
+    }
+    else // else, if would be a p
     {
       cin >> s; // this would be cnf
       break;
@@ -112,7 +119,8 @@ void SATSolverDPLL::initialize() {
 
   int literal; // store the incoming literal value
   // iterate over the clauses
-  for (int i = 0; i < clause_count; i++) {
+  for (int i = 0; i < clause_count; i++)
+  {
     while (true) // while the ith clause gets more literals
     {
       cin >> literal;
@@ -123,14 +131,17 @@ void SATSolverDPLL::initialize() {
         // increment frequency and polarity of the literal
         formula.literal_frequency[literal - 1]++;
         formula.literal_polarity[literal - 1]++;
-      } else if (literal < 0) // if the variable has negative polarity
+      }
+      else if (literal < 0) // if the variable has negative polarity
       {
         formula.clauses[i].push_back(2 * ((-1) * literal - 1) +
                                      1); // store it in the form 2n+1
         // increment frequency and decrement polarity of the literal
         formula.literal_frequency[-1 - literal]++;
         formula.literal_polarity[-1 - literal]--;
-      } else {
+      }
+      else
+      {
         break; // read 0, so move to next clause
       }
     }
@@ -145,17 +156,20 @@ void SATSolverDPLL::initialize() {
  *               Cat::unsatisfied - the formula can no longer be satisfied
  *               Cat::normal - normal exit
  */
-int SATSolverDPLL::unit_propagate(Formula &f) {
+int SATSolverDPLL::unit_propagate(Formula &f)
+{
   bool unit_clause_found =
-      false; // stores whether the current iteration found a unit clause
+      false;                 // stores whether the current iteration found a unit clause
   if (f.clauses.size() == 0) // if the formula contains no clauses
   {
     return Cat::satisfied; // it is vacuously satisfied
   }
-  do {
+  do
+  {
     unit_clause_found = false;
     // iterate over the clauses in f
-    for (int i = 0; i < f.clauses.size(); i++) {
+    for (int i = 0; i < f.clauses.size(); i++)
+    {
       if (f.clauses[i].size() ==
           1) // if the size of a clause is 1, it is a unit clause
       {
@@ -168,11 +182,13 @@ int SATSolverDPLL::unit_propagate(Formula &f) {
                                             2); // apply this change through f
         // if this caused the formula to be either satisfied or unsatisfied,
         // return the result flag
-        if (result == Cat::satisfied || result == Cat::unsatisfied) {
+        if (result == Cat::satisfied || result == Cat::unsatisfied)
+        {
           return result;
         }
         break; // exit the loop to check for another unit clause from the start
-      } else if (f.clauses[i].size() == 0) // if a given clause is empty
+      }
+      else if (f.clauses[i].size() == 0) // if a given clause is empty
       {
         return Cat::unsatisfied; // the formula is unsatisfiable in this branch
       }
@@ -191,18 +207,22 @@ int SATSolverDPLL::unit_propagate(Formula &f) {
  *               Cat::unsatisfied - the formula can no longer be satisfied
  *               Cat::normal - normal exit
  */
-int SATSolverDPLL::apply_transform(Formula &f, int literal_to_apply) {
+int SATSolverDPLL::apply_transform(Formula &f, int literal_to_apply)
+{
   int value_to_apply = f.literals[literal_to_apply]; // the value to apply, 0 -
                                                      // if true, 1 - if false
   // iterate over the clauses in f
-  for (int i = 0; i < f.clauses.size(); i++) {
+  for (int i = 0; i < f.clauses.size(); i++)
+  {
     // iterate over the variables in the clause
-    for (int j = 0; j < f.clauses[i].size(); j++) {
+    for (int j = 0; j < f.clauses[i].size(); j++)
+    {
       // if this is true, then the literal appears with the same polarity as it
       // is being applied that is, if assigned true, it appears positive if
       // assigned false, it appears negative, in this clause hence, the clause
       // has now become true
-      if ((2 * literal_to_apply + value_to_apply) == f.clauses[i][j]) {
+      if ((2 * literal_to_apply + value_to_apply) == f.clauses[i][j])
+      {
         f.clauses.erase(f.clauses.begin() +
                         i); // remove the clause from the list
         i--;                // reset iterator
@@ -212,8 +232,9 @@ int SATSolverDPLL::apply_transform(Formula &f, int literal_to_apply) {
           return Cat::satisfied;
         }
         break; // move to the next clause
-      } else if (f.clauses[i][j] / 2 ==
-                 literal_to_apply) // the literal appears with opposite polarity
+      }
+      else if (f.clauses[i][j] / 2 ==
+               literal_to_apply) // the literal appears with opposite polarity
       {
         f.clauses[i].erase(
             f.clauses[i].begin() +
@@ -240,8 +261,9 @@ int SATSolverDPLL::apply_transform(Formula &f, int literal_to_apply) {
  *               Cat::completed - result has been found, exit recursion all the
  * way
  */
-int SATSolverDPLL::DPLL(Formula f) {
-  
+int SATSolverDPLL::DPLL(Formula f)
+{
+
   // steady_clock::time_point begin = steady_clock::now();
   int result = unit_propagate(f); // perform unit propagation on the formula
   // steady_clock::time_point end = steady_clock::now();
@@ -251,8 +273,9 @@ int SATSolverDPLL::DPLL(Formula f) {
   {
     show_result(f, result);
     return Cat::completed;
-  } else if (result == Cat::unsatisfied) // if formula not satisfied in this
-                                         // branch, return normally
+  }
+  else if (result == Cat::unsatisfied) // if formula not satisfied in this
+                                       // branch, return normally
   {
     return Cat::normal;
   }
@@ -263,13 +286,15 @@ int SATSolverDPLL::DPLL(Formula f) {
       f.literal_frequency.begin(),
       max_element(f.literal_frequency.begin(), f.literal_frequency.end()));
   // need to apply twice, once true, the other false
-  for (int j = 0; j < 2; j++) {
+  for (int j = 0; j < 2; j++)
+  {
     Formula new_f = f; // copy the formula before recursing
     if (new_f.literal_polarity[i] >
         0) // if the number of literals with positive polarity are greater
     {
       new_f.literals[i] = j; // assign positive first
-    } else                   // if not
+    }
+    else // if not
     {
       new_f.literals[i] = (j + 1) % 2; // assign negative first
     }
@@ -282,13 +307,14 @@ int SATSolverDPLL::DPLL(Formula f) {
     {
       show_result(new_f, transform_result);
       return Cat::completed;
-    } else if (transform_result == Cat::unsatisfied) // if formula not satisfied
-                                                     // in this branch, return
-                                                     // normally
+    }
+    else if (transform_result == Cat::unsatisfied) // if formula not satisfied
+                                                   // in this branch, return
+                                                   // normally
     {
       continue;
     }
-    int dpll_result = DPLL(new_f); // recursively call DPLL on the new formula
+    int dpll_result = DPLL(new_f);     // recursively call DPLL on the new formula
     if (dpll_result == Cat::completed) // propagate the result, if completed
     {
       return dpll_result;
@@ -303,24 +329,30 @@ int SATSolverDPLL::DPLL(Formula f) {
  * arguments: f - the formula when it was satisfied or shown to be unsatisfiable
  *            result - the result flag, a member of the Cat enum
  */
-void SATSolverDPLL::show_result(Formula &f, int result) {
+void SATSolverDPLL::show_result(Formula &f, int result)
+{
   if (result == Cat::satisfied) // if the formula is satisfiable
   {
     cout << "SAT" << endl;
-    for (int i = 0; i < f.literals.size(); i++) {
-      if (i != 0) {
+    for (int i = 0; i < f.literals.size(); i++)
+    {
+      if (i != 0)
+      {
         cout << " ";
       }
-      if (f.literals[i] != -1) {
+      if (f.literals[i] != -1)
+      {
         cout << pow(-1, f.literals[i]) * (i + 1);
-      } else // for literals which can take either value, arbitrarily assign
-             // them to be true
+      }
+      else // for literals which can take either value, arbitrarily assign
+           // them to be true
       {
         cout << (i + 1);
       }
     }
     cout << " 0";
-  } else // if the formula is unsatisfiable
+  }
+  else // if the formula is unsatisfiable
   {
     cout << "UNSAT";
   }
@@ -329,17 +361,20 @@ void SATSolverDPLL::show_result(Formula &f, int result) {
 /*
  * function to call the solver
  */
-void SATSolverDPLL::solve() {
+void SATSolverDPLL::solve()
+{
   int result = DPLL(formula); // final result of DPLL on the original formula
   // if normal return till the end, then the formula could not be satisfied in
   // any branch, so it is unsatisfiable
-  if (result == Cat::normal) {
+  if (result == Cat::normal)
+  {
     show_result(formula, Cat::unsatisfied); // the argument formula is a dummy
                                             // here, the result is UNSAT
   }
 }
 
-int main() {
+int main()
+{
   SATSolverDPLL solver; // create the solver
   solver.initialize();  // initialize
   solver.solve();       // solve
