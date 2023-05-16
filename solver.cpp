@@ -64,11 +64,11 @@ class Formula {
  */
 class SATSolverDPLL {
    private:
-    Formula formula;                // the initial formula given as input
-    int literal_count;              // the number of variables in the formula
-    int clause_count;               // the number of clauses in the formula
-    int unit_propagate(Formula &);  // performs unit propagation
-    int DPLL(Formula);              // performs DPLL recursively
+    Formula formula;                     // the initial formula given as input
+    int literal_count;                   // the number of variables in the formula
+    int clause_count;                    // the number of clauses in the formula
+    int unit_propagate(Formula &, int, bool);  // performs unit propagation
+    int DPLL(Formula);                   // performs DPLL recursively
     int apply_transform(
         Formula &,
         int);                          // applies the value of the literal in every clause
@@ -140,7 +140,11 @@ void SATSolverDPLL::initialize() {
  *               Cat::unsatisfied - the formula can no longer be satisfied
  *               Cat::normal - normal exit
  */
-int SATSolverDPLL::unit_propagate(Formula &f) {
+int SATSolverDPLL::unit_propagate(Formula &f, int literal_to_apply, bool use_literal) {
+    if(use_literal){
+      apply_transform(f, literal_to_apply);
+    }
+
     bool unit_clause_found = false;  // stores whether the current iteration found a unit clause
     if (f.clauses.size() == 0) {     // if the formula contains no clauses
         return Cat::satisfied;       // it is vacuously satisfied
@@ -218,17 +222,19 @@ int SATSolverDPLL::apply_transform(Formula &f, int literal_to_apply) {
  */
 int SATSolverDPLL::DPLL(Formula f) {
     // steady_clock::time_point begin = steady_clock::now();
-    int result = unit_propagate(f);  // perform unit propagation on the formula
+    
+    // int result = unit_propagate(f);  // perform unit propagation on the formula
+    
     // steady_clock::time_point end = steady_clock::now();
-    // cout << "Time difference = " << duration_cast<nanoseconds>(end -
-    // begin).count() << "[ns]" << endl;
+    // cout << "Time difference = " << duration_cast<nanoseconds>(end - begin).count() << "[ns]" << endl;
 
-    if (result == Cat::satisfied) {  // if formula satisfied, show result and return
-        show_result(f, result);
-        return Cat::completed;
-    } else if (result == Cat::unsatisfied) {  // if formula not satisfied in this branch, return normally
-        return Cat::normal;
-    }
+    // if (result == Cat::satisfied) {  // if formula satisfied, show result and return
+    //     show_result(f, result);
+    //     return Cat::completed;
+    // } else if (result == Cat::unsatisfied) {  // if formula not satisfied in this branch, return normally
+    //     return Cat::normal;
+    // }
+    
     // find the variable with maximum frequency in f, which will be the next to
     // be assigned a value already assigned variables have this field reset to
     // -1 in order to ignore them
@@ -243,7 +249,7 @@ int SATSolverDPLL::DPLL(Formula f) {
         }
 
         new_f.literal_frequency[i] = -1;                   // reset the frequency to -1 to ignore in the future
-        int transform_result = apply_transform(new_f, i);  // apply the change to all the clauses
+        int transform_result = unit_propagate(new_f, i, true);  // apply the change to all the clauses
 
         if (transform_result == Cat::satisfied) {  // if formula satisfied, show result and return
             show_result(new_f, transform_result);
@@ -293,6 +299,15 @@ void SATSolverDPLL::show_result(Formula &f, int result) {
  * function to call the solver
  */
 void SATSolverDPLL::solve() {
+    // Possible that an unit clause exits that automatically satisfies the problem before making decisions
+    // int simplify_result = unit_propagate(formula, 0, false);
+    // if (simplify_result == Cat::satisfied) {  // if formula satisfied, show result and return
+    //     show_result(formula, simplify_result);
+    //     return;
+    // } else if (simplify_result == Cat::unsatisfied) {  // if formula not satisfied in this branch, return normally
+    //     return;
+    // }
+
     int result = DPLL(formula);  // final result of DPLL on the original formula
     // if normal return till the end, then the formula could not be satisfied in
     // any branch, so it is unsatisfiable
