@@ -150,12 +150,15 @@ int SATSolverDPLL::unit_propagate(Formula &f, int literal_to_apply, bool use_lit
         return Cat::satisfied;       // it is vacuously satisfied
     }
 
+    cout << "Applying literal: "<< literal_to_apply << endl;
+    cout << "Polarity(0=True, 1=False): " << f.literals[literal_to_apply] << endl;
     do {
         unit_clause_found = false;
         // iterate over the clauses in f
         for (int i = 0; i < f.clauses.size(); i++) {
             if (f.clauses[i].size() == 1) {  // if the size of a clause is 1, it is a unit clause
                 unit_clause_found = true;
+                cout << "Unit Implication Found: " << f.clauses[i][0] / 2 << "In clause: " << i << endl;
                 f.literals[f.clauses[i][0] / 2] = f.clauses[i][0] % 2;  // 0 - if true, 1 - if false, set the literal
                 f.literal_frequency[f.clauses[i][0] / 2] = -1;          // once assigned, reset the frequency to mark it closed
                 int result = apply_transform(f, f.clauses[i][0] / 2);   // apply this change through f if this caused the formula to be either satisfied or unsatisfied, return the result flag
